@@ -1,0 +1,7 @@
+server:
+  port: 9200
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  servlet:
+    context-path: /litecase # 访问添加项目名

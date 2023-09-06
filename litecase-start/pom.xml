@@ -26,13 +26,11 @@
         <dependency>
             <groupId>com.litecase</groupId>
             <artifactId>litecase-core</artifactId>
-            <version>0.0.1-1</version>
         </dependency>
 
         <dependency>
             <groupId>com.litecase</groupId>
             <artifactId>litecase-base</artifactId>
-            <version>0.0.1-1</version>
         </dependency>
 
         <dependency>
@@ -59,18 +57,17 @@
 <!--        </dependency>-->
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-
-                <configuration>
-                    <mainClass>com.litecase.start.LitecaseStartApplication</mainClass>
-                    <layout>JAR</layout>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <mainClass>com.litecase.start.LitecaseStartApplication</mainClass>-->
+<!--                    <layout>JAR</layout>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
 
 </project>

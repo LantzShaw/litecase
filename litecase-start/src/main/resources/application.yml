@@ -5,3 +5,9 @@ server:
     allow-bean-definition-overriding: true
   servlet:
     context-path: /litecase # 访问添加项目名
+
+spring:
+  application:
+    name: @artifactId@ # 获取POM文件中的值
+  profiles:
+    active: @profile.name@ # 获取激活的profile name，即：dev, prod, dev等，而此文件为默认配置default, 参考文章: https://blog.csdn.net/benbenniaono1/article/details/105632264

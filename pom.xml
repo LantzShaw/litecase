@@ -11,7 +11,7 @@
     <groupId>com.litecase</groupId>
     <artifactId>litecase-parent</artifactId>
     <version>0.0.1-1</version>
-<!--    <name>litecase-parent</name>-->
+    <name>litecase-parent</name>
     <description>litecase</description>
 
     <!-- 修改父项目的打包方式为pom -->
@@ -21,10 +21,16 @@
     <!-- 依赖版本统一管理 -->
     <properties>
         <java.version>17</java.version>
-        <springframework.version>3.1.0</springframework.version>
+        <resource.delimiter>@</resource.delimiter>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <spring.framework.version>3.1.0</spring.framework.version>
         <mybatis.version>3.5.13</mybatis.version>
-        <mybatisspring.version>2.0.7</mybatisspring.version>
+        <mybatis.spring.version>2.0.7</mybatis.spring.version>
         <thymeleaf.version>3.1.0</thymeleaf.version>
+        <litecase.version>0.0.1-1</litecase.version>
 
         <start-class>com.litecase.start.LitecaseStartApplication</start-class>
     </properties>
@@ -38,7 +44,7 @@
     </modules>
 
 
-
+<!-- 这里依赖版本管理，子项目不会自动继承，需要手动引入，但不需要指定版本号 -->
     <dependencyManagement>
         <dependencies>
             <!-- SpringBoot 热加载 -->
@@ -49,21 +55,33 @@
 <!--            </dependency>-->
 
             <dependency>
+                <groupId>com.litecase</groupId>
+                <artifactId>litecase-core</artifactId>
+                <version>${litecase.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.litecase</groupId>
+                <artifactId>litecase-base</artifactId>
+                <version>${litecase.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-                <version>${springframework.version}</version>
+                <version>${spring.framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>${springframework.version}</version>
+                <version>${spring.framework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-spring</artifactId>
-                <version>${mybatisspring.version}</version>
+                <version>${mybatis.spring.version}</version>
             </dependency>
 
             <dependency>
@@ -73,6 +91,13 @@
             </dependency>
 
 <!--            <dependency>-->
+<!--                <groupId>org.ehcache</groupId>-->
+<!--                <artifactId>ehcache</artifactId>-->
+<!--                <version>3.10.8</version>-->
+<!--            </dependency>-->
+
+
+            <!--            <dependency>-->
 <!--                <groupId>org.springframework.boot</groupId>-->
 <!--                <artifactId>spring-boot-starter-thymeleaf</artifactId>-->
 <!--                <version>${thymeleaf.version}</version>-->
@@ -80,6 +105,7 @@
         </dependencies>
     </dependencyManagement>
 
+<!--    所有子项目默认依赖 -->
 <!--    <dependencies>-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
@@ -116,7 +142,7 @@
 <!--        <zkclient.version>0.10</zkclient.version>-->
 <!--    </properties>   -->
 <!--
-ependencyManagement只会影响现有依赖的配置，但不会引入依赖，
+dependencyManagement只会影响现有依赖的配置，但不会引入依赖，
 即子model不会继承parent中dependencyManagement所有预定义的depandency，
 只引入需要的依赖即可，简单说就是“按需引入依赖”或者“按需继承”；
 因此，在parent中严禁直接使用depandencys预定义依赖，
@@ -132,12 +158,39 @@ ependencyManagement只会影响现有依赖的配置，但不会引入依赖，
 所以删掉该插件。
 -->
     <build>
+        <resources>
+            <!-- 先指定 src/main/resources下所有文件及文件夹为资源文件 -->
+            <resource>
+                <!-- 配置要复制的源目录 -->
+                <directory>src/main/resources</directory>
+                <!-- 配置要包含的文件 -->
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <!--开启过滤，用指定的参数替换directory下的文件中的参数-->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+<!--                <configuration>-->
+<!--                    <mainClass>com.litecase.start.LitecaseStartApplication</mainClass>-->
+<!--                    <skip>true</skip>-->
+<!--                </configuration>-->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+
+
+
 
         <!-- 父pom中统一管理plugin, 子pom只需要使用groupId与artifactId即可, 目的是为了方便管理，统一版本, 起到按需引入的效果, 类似dependencyManagement -->
 <!--        <pluginManagement>-->
@@ -209,22 +262,22 @@ ependencyManagement只会影响现有依赖的配置，但不会引入依赖，
             <properties>
                 <!--当前环境-->
                 <profile.name>prod</profile.name>
-                <database.type>mysql8</database.type>
+<!--                <database.type>mysql8</database.type>-->
                 <!--代码构建控制-->
                 <!--跳过构建源代码包-->
-                <skip.build.source.package>false</skip.build.source.package>
+<!--                <skip.build.source.package>false</skip.build.source.package>-->
                 <!--不copy代码包到docker构建目录-->
-                <skip.copy.docker.resource>false</skip.copy.docker.resource>
+<!--                <skip.copy.docker.resource>false</skip.copy.docker.resource>-->
                 <!--不执行git commit 构建-->
-                <skip.build.git.commit.info>false</skip.build.git.commit.info>
+<!--                <skip.build.git.commit.info>false</skip.build.git.commit.info>-->
                 <!--Nacos配置中心地址-->
-                <config.server-addr></config.server-addr>
+<!--                <config.server-addr></config.server-addr>-->
                 <!--Nacos配置中心命名空间,用于支持多环境.这里必须使用ID，不能使用名称,默认为空-->
                 <!--<config.namespace>8fdcc073-2e51-4722-8274-3f5b76362bb8</config.namespace>-->
-                <config.namespace></config.namespace>
+<!--                <config.namespace></config.namespace>-->
                 <!--Nacos服务发现地址-->
-                <discovery.server-addr></discovery.server-addr>
-                <sentinel.server-addr></sentinel.server-addr>
+<!--                <discovery.server-addr></discovery.server-addr>-->
+<!--                <sentinel.server-addr></sentinel.server-addr>-->
             </properties>
         </profile>
         <!-- Docker -->
@@ -282,5 +335,67 @@ ependencyManagement只会影响现有依赖的配置，但不会引入依赖，
 <!--            </snapshots>-->
 <!--        </pluginRepository>-->
 <!--    </pluginRepositories>-->
+
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>ali-repository</id>-->
+<!--            <url>https://maven.aliyun.com/repository/public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>tencent-repository</id>-->
+<!--            <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>huawei-repository</id>-->
+<!--            <url>https://repo.huaweicloud.com/repository/maven/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>aliyun-repository</id>-->
+<!--            <url>https://maven.aliyun.com/repository/public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--        <pluginRepository>-->
+<!--            <id>tencent-repository</id>-->
+<!--            <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--        <pluginRepository>-->
+<!--            <id>huawei-repository</id>-->
+<!--            <url>https://repo.huaweicloud.com/repository/maven/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
+
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>nexus</id>-->
+<!--            <name>Releases</name>-->
+<!--            <url>http://10.10.0.27:8181/repository/maven-releases</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>nexus</id>-->
+<!--            <name>Snapshot</name>-->
+<!--            <url>http://10.10.0.27:8181/repository/maven-snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
 </project>
